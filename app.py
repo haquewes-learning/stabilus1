@@ -51,25 +51,30 @@ def main():
 
     st.sidebar.header("Filter Options")
 
+    def reset_filters():
+        for col in numeric_cols:
+            st.session_state[f"{col}_select"] = "All"
+
+    st.sidebar.button("Reset Filters", on_click=reset_filters)
+
     filters = {}
     for col, label in numeric_cols.items():
         if col not in df.columns:
             continue
-        min_val = float(df[col].min(skipna=True))
-        max_val = float(df[col].max(skipna=True))
-        selected = st.sidebar.slider(
+        values = sorted(df[col].dropna().unique())
+        options = ["All"] + values
+        selected = st.sidebar.selectbox(
             label,
-            min_value=min_val,
-            max_value=max_val,
-            value=(min_val, max_val),
-            step=(max_val - min_val) / 100 if max_val > min_val else 1.0,
-            key=f"{col}_range",
+            options,
+            index=0,
+            key=f"{col}_select",
         )
         filters[col] = selected
 
     filtered = df.copy()
-    for col, (low, high) in filters.items():
-        filtered = filtered[(filtered[col] >= low) & (filtered[col] <= high)]
+    for col, selected in filters.items():
+        if selected != "All":
+            filtered = filtered[filtered[col] == selected]
 
     st.sidebar.write("**Results count:**", len(filtered))
 
