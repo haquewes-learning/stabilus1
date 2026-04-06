@@ -30,7 +30,7 @@ def load_data(path="data.csv"):
 
 
 def main():
-    st.title("Stabilus Gas Spring Brand Number Finder")
+    st.title("Stabilus Lift Support Reference")
     st.markdown(
         "Use the sliders and/or selects to filter by Extended Length, Compressed Length, Tube Diameter, and Rod Diameter. "
         "Matching Brand Numbers are shown below."
