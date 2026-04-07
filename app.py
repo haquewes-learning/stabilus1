@@ -78,8 +78,8 @@ def main():
 
     st.sidebar.write("**Results count:**", len(filtered))
 
-    with st.expander("Show filtered rows"):
-        st.dataframe(filtered)
+    st.subheader("Filtered rows")
+    st.dataframe(filtered)
 
     st.markdown("---")
     st.caption("Source: data.csv")
