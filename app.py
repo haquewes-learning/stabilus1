@@ -78,12 +78,6 @@ def main():
 
     st.sidebar.write("**Results count:**", len(filtered))
 
-    st.subheader("Filtered Brand Numbers")
-    if "Brand Number" in filtered.columns:
-        st.dataframe(filtered[["Brand Number"]].dropna().drop_duplicates().reset_index(drop=True))
-    else:
-        st.warning("Brand Number column not found in CSV.")
-
     with st.expander("Show filtered rows"):
         st.dataframe(filtered)
 
