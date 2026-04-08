@@ -3,6 +3,40 @@ import streamlit as st  # type: ignore[import]
 
 st.set_page_config(page_title="Stabilus Gas Spring Finder", layout="wide")
 
+# Load user credentials from Streamlit secrets
+USERS = st.secrets["users"]
+
+
+def check_credentials(username: str, password: str) -> bool:
+    """Validate username and password."""
+    return username in USERS and USERS[username] == password
+
+
+def login_page():
+    """Display the login form."""
+    st.title("🔐 Login")
+    st.markdown("Please enter your credentials to access the Stabilus Gas Spring Finder.")
+    
+    with st.form("login_form"):
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        submitted = st.form_submit_button("Login")
+        
+        if submitted:
+            if check_credentials(username, password):
+                st.session_state.authenticated = True
+                st.session_state.username = username
+                st.rerun()
+            else:
+                st.error("Invalid username or password")
+
+
+def logout():
+    """Clear authentication state."""
+    st.session_state.authenticated = False
+    st.session_state.username = None
+    st.rerun()
+
 @st.cache_data
 def load_data(path="data.csv"):
     df = pd.read_csv(path, dtype=str)
@@ -86,4 +120,19 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # Initialize authentication state
+    if "authenticated" not in st.session_state:
+        st.session_state.authenticated = False
+        st.session_state.username = None
+    
+    # Show login page if not authenticated
+    if not st.session_state.authenticated:
+        login_page()
+    else:
+        # Display logout button in top right
+        col1, col2 = st.columns([0.9, 0.1])
+        with col2:
+            if st.button("Logout"):
+                logout()
+        
+        main()
